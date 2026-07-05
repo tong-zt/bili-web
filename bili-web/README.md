@@ -147,8 +147,4 @@ POST /api/tasks/cleanup
 GET /api/files/{task_id}
 ```
 
-## 下一步可增强
 
-- 任务持久化，服务重启后保留记录
-- 前端替换为 Vue + Vite
-- 增加服务器磁盘空间显示
