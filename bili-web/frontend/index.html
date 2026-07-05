@@ -1,0 +1,186 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bili Web</title>
+    <link rel="stylesheet" href="./assets/styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="app-header">
+        <div>
+          <p class="eyebrow">Bili Web</p>
+          <h1>哔哩哔哩视频解析下载</h1>
+        </div>
+        <div class="header-status">
+          <span class="status-dot" id="serviceDot"></span>
+          <span id="serviceStatus">连接中</span>
+        </div>
+      </header>
+
+      <section class="tool-grid">
+        <section class="primary-panel">
+          <form class="url-form" id="parseForm">
+            <label class="field field-grow">
+              <span>视频链接</span>
+              <input id="videoUrl" name="url" type="text" autocomplete="off" placeholder="粘贴 BV / AV / 视频链接" required />
+            </label>
+            <button class="primary-btn" type="submit" id="parseBtn">解析</button>
+          </form>
+
+          <section class="video-panel" id="resultPanel" hidden>
+            <div class="cover-wrap">
+              <img class="cover" id="cover" alt="" />
+              <a class="cover-download" id="coverDownload" hidden>下载封面</a>
+            </div>
+            <div class="video-info">
+              <p class="section-kicker">已解析</p>
+              <h2 id="title"></h2>
+              <p id="meta"></p>
+              <div class="info-grid">
+                <span id="videoDuration">时长：-</span>
+                <span id="pageCount">分 P：-</span>
+                <span id="qualitySummary">清晰度：-</span>
+                <span id="loginHint">高清：-</span>
+              </div>
+            </div>
+          </section>
+
+          <section class="settings-panel">
+            <div class="section-head">
+              <div>
+                <p class="section-kicker">下载设置</p>
+                <h2>选择分 P、清晰度和格式</h2>
+              </div>
+              <span class="mini-badge" id="loginBadge">未登录</span>
+            </div>
+
+            <div class="controls">
+              <label class="field">
+                <span>分 P</span>
+                <select id="pageSelect">
+                  <option value="1">默认 P1</option>
+                </select>
+              </label>
+              <label class="field">
+                <span>清晰度</span>
+                <select id="qualitySelect">
+                  <option value="">解析后选择</option>
+                </select>
+              </label>
+              <label class="field">
+                <span>类型</span>
+                <select id="kindSelect">
+                  <option value="merged">视频+音频</option>
+                  <option value="video">仅视频</option>
+                  <option value="audio">仅音频 .m4a</option>
+                </select>
+              </label>
+              <button class="primary-btn" id="downloadBtn" type="button" disabled>下载</button>
+            </div>
+          </section>
+
+          <section class="task-panel" id="taskPanel" hidden>
+            <div class="task-line">
+              <div>
+                <p class="section-kicker">当前任务</p>
+                <strong id="taskTitle"></strong>
+              </div>
+              <span id="taskStatus"></span>
+            </div>
+            <div class="progress">
+              <span id="progressBar"></span>
+            </div>
+            <div class="task-meta">
+              <span id="taskSize">0 B / 0 B</span>
+              <span id="taskSpeed">0 B/s</span>
+              <span id="taskEta">剩余：-</span>
+            </div>
+            <p id="taskMessage"></p>
+            <div class="button-row compact-row">
+              <a class="download-link" id="fileLink" hidden>保存文件</a>
+              <button id="cancelCurrentBtn" type="button">取消任务</button>
+            </div>
+          </section>
+
+          <section class="task-list-panel">
+            <div class="section-head">
+              <div>
+                <p class="section-kicker">任务列表</p>
+                <h2>下载队列与历史</h2>
+              </div>
+              <div class="button-row compact-row">
+                <button id="refreshTasksBtn" type="button">刷新</button>
+                <button id="cleanupBtn" type="button">清理旧文件</button>
+              </div>
+            </div>
+            <p class="retention-text" id="retentionText">文件默认保留 24 小时。</p>
+            <div class="task-list" id="taskList">
+              <div class="empty-state">暂无任务</div>
+            </div>
+          </section>
+        </section>
+
+        <aside class="side-panel">
+          <section class="login-panel">
+            <div class="section-head">
+              <div>
+                <p class="section-kicker">登录</p>
+                <h2>临时 Cookie</h2>
+              </div>
+            </div>
+
+            <div class="profile-box" id="profileBox" hidden>
+              <img id="profileFace" alt="" />
+              <div>
+                <strong id="profileName"></strong>
+                <p id="profileMid"></p>
+              </div>
+            </div>
+
+            <div class="qr-box" id="qrBox">
+              <span>点击生成二维码</span>
+            </div>
+
+            <div class="button-row">
+              <button id="createQrBtn" type="button">扫码登录</button>
+              <button id="mobileLoginBtn" type="button" hidden>手机打开登录</button>
+              <button id="copyLoginUrlBtn" type="button" hidden>复制链接</button>
+              <button id="stopQrBtn" type="button">停止</button>
+            </div>
+
+            <p class="status-text" id="qrStatus">未生成二维码</p>
+
+            <label class="field">
+              <span>B站 Cookie</span>
+              <textarea id="biliCookie" rows="5" spellcheck="false" placeholder="SESSDATA=...; bili_jct=...; DedeUserID=..."></textarea>
+            </label>
+
+            <p class="cookie-format" id="cookieFormat">需要包含 SESSDATA、bili_jct、DedeUserID。</p>
+
+            <div class="button-row">
+              <button id="checkCookieBtn" type="button">检查 Cookie</button>
+              <button id="clearCookieBtn" type="button">清空</button>
+            </div>
+
+            <p class="status-text" id="cookieCheckResult"></p>
+          </section>
+
+          <section class="help-panel">
+            <p class="section-kicker">提示</p>
+            <ul>
+              <li>扫码成功后 Cookie 会自动填入。</li>
+              <li>刷新页面后需要重新登录或重新粘贴 Cookie。</li>
+              <li>任务完成后的文件会按保留时间自动清理。</li>
+              <li>下载慢通常是服务器到 B 站 CDN 的线路问题。</li>
+            </ul>
+          </section>
+        </aside>
+      </section>
+    </main>
+
+    <div class="toast" id="toast" hidden></div>
+    <script src="./assets/app.js"></script>
+  </body>
+</html>
